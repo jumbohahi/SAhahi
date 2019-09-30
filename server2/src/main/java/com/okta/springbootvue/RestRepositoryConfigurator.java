@@ -1,7 +1,5 @@
 package com.okta.springbootvue;
 
-
-
 import com.okta.springbootvue.Entity.*;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
