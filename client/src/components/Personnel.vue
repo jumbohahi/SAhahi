@@ -1,9 +1,9 @@
 <template>
   <v-container>
-    <v-app-bar app color="blue darken-2" dark>
+    <!-- <v-app-bar app color="blue darken-2" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>ระบบจัดการโรคติดต่อ</v-toolbar-title>
-    </v-app-bar>
+    </v-app-bar> -->
     <v-container>
       <div>
         <v-responsive>
@@ -14,78 +14,78 @@
 
               </v-toolbar>
               <v-card-text>
-              <v-form>
-              <v-row>
-              <v-col cols="3">
-                <v-combobox
-                  label="เลือกคำนำหน้าชื่อ"
-                  outlined
-                  v-model="personnel.prefixId"
-                  :items="prefixs"
-                  item-text="prefixName"
-                  item-value="prefixId"
-                  :rules="[(v) => !!v || 'Item is required']"
-                  required
-                ></v-combobox>
-              </v-col>
-              </v-row>
+                <v-form>
+                  <v-row>
+                    <v-col cols="3">
+                      <v-select
+                              label="เลือกคำนำหน้าชื่อ"
+                              outlined
+                              v-model="personnel.prefixId"
+                              :items="prefixName"
+                              item-text="prefixName"
+                              item-value="prefixId"
+                              :rules="[(v) => !!v || 'Item is required']"
+                              required
+                      ></v-select>
+                    </v-col>
+                  </v-row>
                   <v-col cols="12">
                     <v-text-field
-                      label="ชื่อ-นามสกุล"
-                      name="name"
-                      type="text"
-                      v-model="personnel.personnelName"
-                      :rules="[(v) => !!v || 'Please fill in the information']"
-                  required
+                            label="ชื่อ-นามสกุล"
+                            name="name"
+                            type="text"
+                            v-model="personnel.personnelName"
+                            :rules="[(v) => !!v || 'Please fill in the information']"
+                            required
                     ></v-text-field>
                   </v-col>
-                
-              <v-row>
-              <v-col cols="12">
-                <v-combobox
-                  label="เลือกตำแหน่ง"
-                  outlined
-                  v-model="personnel.positionId"
-                  :items="positions"
-                  item-text="positionName"
-                  item-value="positionId"
-                  :rules="[(v) => !!v || 'Item is required']"
-                  required
-                ></v-combobox>
-              </v-col>
-              </v-row>
 
-              <v-row>
-              <v-col cols="12">
-                <v-combobox
-                  label="เลือกแผนก"
-                  outlined
-                  v-model="personnel.departmentId"
-                  :items="departments"
-                  item-text="departmentName"
-                  item-value="departmentId"
-                  :rules="[(v) => !!v || 'Item is required']"
-                  required
-                ></v-combobox>
-              </v-col>
-              </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-combobox
+                              label="เลือกตำแหน่ง"
+                              outlined
+                              v-model="personnel.positionId"
+                              :items="positionName"
+                              item-text="positionName"
+                              item-value="positionId"
+                              :rules="[(v) => !!v || 'Item is required']"
+                              required
+                      ></v-combobox>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="12">
+                      <v-combobox
+                              label="เลือกแผนก"
+                              outlined
+                              v-model="personnel.departmentId"
+                              :items="departmentName"
+                              item-text="departmentName"
+                              item-value="departmentId"
+                              :rules="[(v) => !!v || 'Item is required']"
+                              required
+                      ></v-combobox>
+                    </v-col>
+                  </v-row>
 
                   <v-col cols="12">
                     <v-text-field
-                      label="หน้าที่"
-                      name="role"
-                      type="text"
-                      v-model="personnel.personnelRole"
-                      :rules="[(v) => !!v || 'Please fill in the information']"
-                  required
+                            label="หน้าที่"
+                            name="role"
+                            type="text"
+                            v-model="personnel.personnelRole"
+                            :rules="[(v) => !!v || 'Please fill in the information']"
+                            required
                     ></v-text-field>
                   </v-col>
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn color="error">Clear</v-btn>
+                <v-btn color="error" @click="clear">Clear</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-2" @click="savePersonnel(personnel.value)">Save</v-btn>
+                <v-btn color="blue darken-2" @click="savePersonnel">Save</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -95,96 +95,111 @@
   </v-container>
 </template>
 
- <script>
-//import controller from "../controller/controller";
-/* eslint-disable */
-import http from '../http-common';
-
+<script>
+import http from "../http-common";
+// eslint-disable-next-line no-unused-vars
 export default {
-  name: "personnels",
+  name: "personnel",
   data() {
     return {
-      personnel:{
+      personnel: {
         prefixId: "",
-        personnelName: "",       
         positionId: "",
         departmentId: "",
-        personnelRole: "",
-        
+        personnelName: "",
+        personnelRole: ""
       },
-      prefixs: [],
-      positions: [],
-      departments: []
+      prefixName: [],
+      departmentName: [],
+      positionName: []
     };
   },
   methods: {
-    getPrefixs(){
+    /* eslint-disable no-console */
+
+    // ดึงข้อมูล Employee ใส่ combobox
+    getPrefix() {
       http
-        .get("/Prefix")
+        .get("/prefix")
         .then(response => {
-          this.prefixs = response.data;
-          console.log(this.prefixs);
+          this.prefixName = response.data;
+          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
-  },
-    getPositions(){
+    },
+    // ดึงข้อมูล Video ใส่ combobox
+    getCreatDepartment() {
       http
-        .get("/Positions")
+        .get("/department")
         .then(response => {
-         this.positions = response.data;
-         console.log(this.positions);
+          this.departmentName = response.data;
+          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
-    
-  },
-    getDepartments(){
+    },
+    // ดึงข้อมูล RentalType ใส่ combobox
+    getCreatTravel() {
       http
-        .get("/Department")
+        .get("/position")
         .then(response => {
-          this.departments = response.data;
-          console.log(this.departments);
+          this.positionName = response.data;
+          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
-    
-  },
-   savePersonnel(value) {
-     console.log(value)
+    },
+
+    savePersonnel() {
+      console.log(this.personnel)
       http
         .post(
-        "/Personnels/add/" ,{value}
-            // this.personnel.prefixId +
-            // "/" +
-            // this.personnel.personnelName +
-            // "/" +
-            // this.personnel.positionId +
-            // "/" +
-            // this.personnel.departmentId+
-            // "/" +
-            // this.personnel.personnelRole,
-          //this.personnel
+          "http://localhost:9000/personnel/" +
+            this.personnel.prefixId +
+            "/" +
+            this.personnel.positionId.positionId +
+            "/" +
+            this.personnel.departmentId.departmentId,
+                {
+                  personnelName: this.personnel.personnelName,
+                  personnelRole: this.personnel.personnelRole
+                }
         )
-        
+        .then(response => {
+          console.log(response);
+          alert('เพิ่มข้อมูลสำเร็จ');
+        })
         .catch(e => {
           console.log(e);
+          alert('ไม่สามารถเพิ่มข้อมูลได้');
         });
       this.submitted = true;
     },
-    Clear() {
-      this.$refs.form.reset();
+    clear() {
+      this.personnel.prefixId = ''
+      this.personnel.personnelName = ''
+      this.personnel.positionId = ''
+      this.personnel.departmentId = ''
+      this.personnel.personnelRole = ''
      
+
+      
     },
+    refreshList() {
+      this.getPrefix();
+      this.getCreatDepartment();
+      this.getCreatTravel();
+    }
+    /* eslint-enable no-console */
   },
-    mounted() {
-    this.getPrefixs();
-    this.getPositions();
-    this.getDepartments();
+  mounted() {
+    this.getPrefix();
+    this.getCreatDepartment();
+    this.getCreatTravel();
   }
-  
 };
 </script>

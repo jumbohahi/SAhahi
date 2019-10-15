@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router';
-import Personnel from '../components/Personnel';
-//import VideoRental from '../components/VideoRental';
-
+import personnel from '../components/Personnel';
+import disease from '../components/Disease'
+import examResult from '../components/ExamResult'
+import infectionExaminee from '../components/infectionExaminee'
 Vue.use(Router);
 
 export default new Router({
@@ -10,7 +11,23 @@ export default new Router({
     base: process.env.BASE_URL,
     routes: [{
             path: '/',
-            component: Personnel
+            component: personnel
+        },
+        {
+            path: '/personnel',
+            component: personnel
+        },
+        {
+            path: '/disease',
+            component: disease
+        },
+        {
+            path:'/examResult',
+            component: examResult
+        },
+        {
+            path:'/infection',
+            component: infectionExaminee
         }
     ]
 });
